@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Path
 from models import Todo
 
 todo_router = APIRouter()
@@ -22,7 +22,11 @@ async def retrieve_todos() -> dict:
 
 
 @todo_router.get("/todo/{todo_id}")  # todo_id를 경로 매개변수로 추가한다.
-async def get_single_todo(todo_id: int) -> dict:
+async def get_single_todo(
+    todo_id: int = Path(
+        ..., title="The ID of the todo to retrieve."
+    )  # Path는 라우트 함수에 있는 "다른 인수와 경로 매개변수를 구분"하는 역할을 한다.
+) -> dict:
     for todo in todo_list:
         if todo.id == todo_id:
             return {
