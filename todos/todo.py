@@ -19,3 +19,15 @@ async def retrieve_todos() -> dict:
     return {
         "todos": todo_list,
     }
+
+
+@todo_router.get("/todo/{todo_id}")  # todo_id를 경로 매개변수로 추가한다.
+async def get_single_todo(todo_id: int) -> dict:
+    for todo in todo_list:
+        if todo.id == todo_id:
+            return {
+                "todo": todo,
+            }
+    return {
+        "message": "Todo with supplied ID doesn't exist.",
+    }
