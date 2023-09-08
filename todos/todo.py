@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Path
-from models import Todo, TodoItem
+from models import Todo, TodoItem, TodoItems
 
 todo_router = APIRouter()
 
@@ -14,7 +14,7 @@ async def add_todo(todo: Todo) -> dict:  # 요청 바디의 변수 유형을 dic
     }
 
 
-@todo_router.get("/todo")
+@todo_router.get("/todo", response_model=TodoItems)  # 응답 모델을 TodoItems로 변경한다.
 async def retrieve_todos() -> dict:
     return {
         "todos": todo_list,
