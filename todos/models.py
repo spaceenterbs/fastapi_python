@@ -29,7 +29,7 @@ class TodoItem(BaseModel):  # UPDATE 라우트 요청 바디용 모델
 
 
 class TodoItems(BaseModel):
-    todos: List[TodoItem] # TodoItem 모델에 정의된 변수 목록을 반환한다.
+    todos: List[TodoItem]  # TodoItem 모델에 정의된 변수 목록을 반환한다.
 
     model_config = {
         "json_schema_extra": {
@@ -39,7 +39,7 @@ class TodoItems(BaseModel):
                         "item": "Example Schema 1!",
                     },
                     {
-                        "item": "Example Schema 2!",
+                        "item": "Example Schema 2!!",
                     },
                 ]
             }
