@@ -1,37 +1,65 @@
-from fastapi import APIRouter, Path, HTTPException, status
+from fastapi import APIRouter, Path, HTTPException, status, Request, Depends
+from fastapi.templating import Jinja2Templates
 from models import Todo, TodoItem, TodoItems
 
 todo_router = APIRouter()
 
 todo_list = []
 
+templates = Jinja2Templates(directory="templates/")
+
 
 @todo_router.post("/todo", status_code=201)  # status.HTTP_201_CREATED
-async def add_todo(todo: Todo) -> dict:  # 요청 바디의 변수 유형을 dict에서 Todo로 변경한다.
+async def add_todo(
+    request: Request, todo: Todo = Depends(Todo.as_form)
+):  # (todo: Todo) -> dict:  # 요청 바디의 변수 유형을 dict에서 Todo로 변경한다.
+    todo.id = len(todo_list) + 1
     todo_list.append(todo)
-    return {
-        "message": "Todo added successfully.",
-    }
+    return templates.TemplateResponse(
+        "todo.html",
+        {
+            "request": request,
+            "todos": todo_list,
+        },
+    )
+    # return {
+    #     "message": "Todo added successfully.",
+    # }
 
 
 @todo_router.get("/todo", response_model=TodoItems)  # 응답 모델을 TodoItems로 변경한다.
-async def retrieve_todos() -> dict:
-    return {
-        "todos": todo_list,
-    }
+async def retrieve_todos(request: Request):  # -> dict:
+    return templates.TemplateResponse(
+        "todo.html",
+        {
+            "request": request,
+            "todos": todo_list,
+        },
+    )
+    # return {
+    #     "todos": todo_list,
+    # }
 
 
 @todo_router.get("/todo/{todo_id}")  # todo_id를 경로 매개변수로 추가한다.
 async def get_single_todo(
+    request: Request,
     todo_id: int = Path(
         ..., title="The ID of the todo to retrieve."
-    )  # Path는 라우트 함수에 있는 "다른 인수와 경로 매개변수를 구분"하는 역할을 한다.
+    ),  # Path는 라우트 함수에 있는 "다른 인수와 경로 매개변수를 구분"하는 역할을 한다.
 ) -> dict:
     for todo in todo_list:
         if todo.id == todo_id:
-            return {
-                "todo": todo,
-            }
+            return templates.TemplateResponse(
+                "todo.html",
+                {
+                    "request": request,
+                    "todos": todo,
+                },
+            )
+            # return {
+            #     "todo": todo,
+            # }
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Todo with supplied ID doesn't exist",
