@@ -13,7 +13,7 @@ app.include_router(
 )
 app.include_router(
     event_router,
-    prefix="/evnet",
+    prefix="/event",
 )
 
 # uvicorn.run() 메서드를 사용해 8000번 포트에서 앱을 실행하도록 설정한다.
