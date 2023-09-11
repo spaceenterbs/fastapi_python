@@ -5,7 +5,7 @@ from models.users import User, UserSignIn
 user_router = APIRouter(
     tags=["User"],
 )
-users = {}
+users = {}  # 사용자 데이터를 관리하기 위한 목적. 데이터를 딕셔너리에 추가하고 검색하기 위해 사용된다.
 
 
 @user_router.post("/signup")
