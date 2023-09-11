@@ -4,7 +4,7 @@ from fastapi import Form
 
 
 class Todo(BaseModel):
-    id: Optional[Int]
+    id: Optional[int]
     item: str
 
     @classmethod

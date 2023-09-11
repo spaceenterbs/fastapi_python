@@ -1,1 +1,27 @@
-{% comment %} 애플리케이션 홈 페이지용 home.html {% endcomment %}
+{# 애플리케이션 홈 페이지용 home.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=devic-width, initial-scale=1.0">
+    <title>Packt Todo Application</title>
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+        integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" rel="stylesheet">
+</head>
+<body>
+<header>
+    <nav class="navar">
+        <div class="container-fluid">
+            <center>
+                <h1>Packt Todo Application</h1>
+            </center>
+        </div>
+    </nav>
+</header>
+<div class="container-fluid">
+    {% block todo_container %}{% endblock %} {# 자식 템플릿에서 정의된 todo_container를 사용한다는 의미.todo_container 블록을 가지고 있는 자식 템플릿의 콘텐츠가 여기에 표시된다. #}
+</div>
+</body>
+</html>

@@ -1,1 +1,48 @@
-{% comment %} todo 페이지용 todo.html {% endcomment %}
+{# todo 페이지용 todo.html #}
+{% extends "home.html" %} {# home 템플릿을 상속한다. #}
+{% block todo_contatiner %} {# todo_container 블록을 정의해서 부모 템플릿이 이 템플릿의 콘텐츠를 표시할 수 있게 한다. #}
+{# todo 템플릿은 모든 todo를 추출하는 라우트와 단일 todo 추출하는 라우트 모두에서 사용된다. 결과적으로 라우트에 따라 다른 콘텐츠를 렌더링하게 되는 것. #}
+<main class="container">
+    <hr>
+    <section class="container-fluid">
+        <form method="post">
+            <div class="col-auto">
+                <div class="input-group mb-3">
+                    <input aria-describedby="button-addon2" aria-label="Add a todo" class="form-control" name="item"
+                           placeholder="Purchase Packt's Python workshop course" type="text"
+                           value="{{ item }}"/>
+                    <button class="btn btn-outline-primary" data-mdb-ripple-color="dark" id="button-addon2"
+                            type="submit">
+                        Add Todo
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+    {% if todo %} {# todo 변수가 전달되는지 확인한다. #}
+    <article class="card container-fluid">
+        <br/>
+        <h4>Todo ID: {{ todo.id }} </h4>
+        <p>
+            <strong>
+                Item: {{ todo.item }}
+            </strong>
+        </p>
+    </article>
+    {% else %}
+    <section class="container-fluid">
+        <h2 align="center">Todos</h2>
+        <br>
+        <div class="card">
+            <ul class="list-group list-group-flush">
+                {% for todo in todos %}
+                <li class="list-group-item">
+                    {{ loop.index }}. <a href="/todo/{{ loop.index }}"> {{ todo.item }} </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}
