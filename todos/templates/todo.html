@@ -1,6 +1,8 @@
 {# todo 페이지용 todo.html #}
-{% extends "home.html" %} {# home 템플릿을 상속한다. #}
-{% block todo_contatiner %} {# todo_container 블록을 정의해서 부모 템플릿이 이 템플릿의 콘텐츠를 표시할 수 있게 한다. #}
+{% extends "home.html" %} 
+{# home 템플릿을 상속한다. #}
+
+{% block todo_container %} {# todo_container 블록을 정의해서 부모 템플릿이 이 템플릿의 콘텐츠를 표시할 수 있게 한다. #}
 {# todo 템플릿은 모든 todo를 추출하는 라우트와 단일 todo 추출하는 라우트 모두에서 사용된다. 결과적으로 라우트에 따라 다른 콘텐츠를 렌더링하게 되는 것. #}
 <main class="container">
     <hr>

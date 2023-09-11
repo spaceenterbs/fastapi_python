@@ -47,7 +47,7 @@ async def get_single_todo(
     todo_id: int = Path(
         ..., title="The ID of the todo to retrieve."
     ),  # Path는 라우트 함수에 있는 "다른 인수와 경로 매개변수를 구분"하는 역할을 한다.
-) -> dict:
+):  # -> dict:
     for todo in todo_list:
         if todo.id == todo_id:
             return templates.TemplateResponse(
@@ -108,7 +108,7 @@ async def delete_single_todo(todo_id: int) -> dict:
 
 
 @todo_router.delete("/todo")
-async def delete_all_todos() -> dict:
+async def delete_all_todo() -> dict:
     todo_list.clear()
     return {
         "message": "Todos deleted successfully.",
