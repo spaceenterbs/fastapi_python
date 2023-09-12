@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     async def initialize_database(self):  # 데이터베이스를 초기화하는 메서드를 정의한다.
         client = AsyncIOMotorClient(self.DATABASE_URL)
         await init_beanie(  # db 클라이언트를 설정한다. SQLModel에서 생성한 몽고 엔진 버전과 문서 모델을 인수로 설정한다.
-            database=client.get_default_dadtabase(),
+            database=client.get_default_database(),
             document_models=[Event, User],
         )
 
