@@ -1,7 +1,7 @@
-from beanie import init_beanie
+from beanie import init_beanie, PydanticObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing import Optional
-from pydantic import BaseSettings
+from typing import Any, List, Optional
+from pydantic import BaseSettings, BaseModel
 from models.users import User
 from models.events import Event
 
@@ -18,3 +18,63 @@ class Settings(BaseSettings):
 
     class Config:  # db URL을 .env 파일에서 읽어온다.
         env_file = ".env"
+
+
+class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중에 사용되는 모델은 Event 또는 User 문서의 모델이다.
+    def __init__(self, model):
+        self.model = model
+
+    async def save(
+        self, document
+    ) -> None:  # 문서를 인수로 받는 save() 메서드를 정의한다. 문서의 인스턴스를 받아서 db 인스턴스에 전달한다.
+        await document.create()
+        return
+
+    async def get(
+        self, id: PydanticObjectId
+    ) -> Any:  # ID를 인수로 받아 컬렉션에서 일치하는 레코드를 불러온다.
+        doc = await self.model.get(id)
+        if doc:
+            return doc
+        return False
+
+    async def get_all(self) -> List[Any]:  # 인수가 없고 컬렉션에 있는 모든 레코드를 불러온다.
+        docs = await self.model.find_all().to_list()
+        return docs
+
+    async def update(
+        self, id: PydanticObjectId, body: BaseModel
+    ) -> Any:  # update() 메서드는 하나의 ID와 pydantic 스키마(모델)를 인수로 받는다.
+        """
+        update() 메서드는 하나의 ID와 pydantic 스키마(모델)를 인수로 받아서,
+        클라이언트가 보낸 PUT 요청에 의해 변경된 필드를 업데이트한다.
+        None 값은 제외되며, 변경 쿼리는 beanie의 update() 메서드를 통해 실행된다.
+        """
+        doc_id = id
+        des_body = body.dict()
+        des_body = {
+            k: v for k, v in des_body.items() if v is not None
+        }  # 변경된 요청 바디는 딕셔너리에 저장된 다음 None값을 제외하도록 필터링된다.
+        update_query = {
+            "$set": {
+                field: value for field, value in des_body.items()
+            },  # 스키마에는 클라이언트가 보낸 PUT 요청에 의해 변경된 필드가 저장된다.
+        }
+
+        doc = await self.get(doc_id)
+        if not doc:
+            return False
+        await doc.update(update_query)
+        return doc
+
+    # 작업이 완료되면 변경 쿼리에 저장되고 beanie의 update() 메서드를 통해 실행된다.
+
+    async def delete(self, id: PydanticObjectId) -> bool:
+        """
+        해당 레코드가 있는지 확인하고 있으면 삭제한다.
+        """
+        doc = await self.get(id)
+        if not doc:
+            return False
+        await doc.delete()
+        return True
