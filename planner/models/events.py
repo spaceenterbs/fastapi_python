@@ -1,10 +1,12 @@
 # 이벤트 처리용 모델을 정의
 from pydantic import BaseModel
-from typing import List
+from beanie import Document
+from typing import Optional, List
 
 
-class Event(BaseModel):
-    id: int
+# models 폴더의 모델 파일을 변경하여 몽고DB 문서를 사용할 수 있도록 한다.
+class Event(Document):
+    # id: int
     title: str
     image: str
     description: str
@@ -22,3 +24,25 @@ class Event(BaseModel):
             },
         },
     }
+
+    class settings:
+        name = "events"
+
+
+class EventUpdate(BaseModel):
+    title: Optional[str]
+    image: Optional[str]
+    description: Optional[str]
+    tags: Optional[List[str]]
+    location: Optional[str]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "title": "FastAPI Book Launch",
+                "image": "https://linktomyimage.com/image.png",
+                "description": "We will be discussing the contents of the FastAPI book in this event. Ensure to come with your own copy to win gifts!",
+                "tags": ["python", "fastapi", "book", "launch"],
+                "location": "Google Meet",
+            }
+        }
