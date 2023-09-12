@@ -21,9 +21,12 @@ class Event(SQLModel, table=True):  # 기존 모델 클래스를 SQL 테이블 �
     #     tags: List[str]
     #     location: str
 
-    model_config = {
-        "arbitrary_types_allowed": True,
-        "json_schema_extra": {
+    # model_config = {
+    #     "arbitrary_types_allowed": True,
+    #     "json_schema_extra": {
+    class Config:
+        arbitrary_types_allowed: True
+        schema_extra = {
             "example": {
                 "title": "FastAPI Book Launch",
                 "image": "https://linktomyimage.com/image.png",
@@ -31,20 +34,22 @@ class Event(SQLModel, table=True):  # 기존 모델 클래스를 SQL 테이블 �
                 "tags": ["python", "fastapi", "book", "launch"],
                 "location": "Google Meet",
             },
-        },
-    }
+        }
 
 
 # UPDATE 처리의 바디 유형으로 사용할 SQLModel 클래스를 추가한다.
-class EventUpdata(SQLModel):
+class EventUpdate(SQLModel):
     title: Optional[str]
     image: Optional[str]
     description: Optional[str]
     tags: Optional[List[str]]
     location: Optional[str]
 
-    model_config = {
-        "json_schema_extra": {
+    # model_config = {
+    #     "json_schema_extra": {
+
+    class Config:
+        schema_extra = {
             "example": {
                 "title": "FastAPI Book Launch",
                 "image": "https://linktomyimage.com/image.png",
@@ -52,5 +57,4 @@ class EventUpdata(SQLModel):
                 "tags": ["python", "fastapi", "book", "launch"],
                 "location": "Google Meet",
             },
-        },
-    }
+        }

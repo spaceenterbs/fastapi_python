@@ -11,15 +11,16 @@ class User(BaseModel):
         List[Event]
     ] = None  # 기본값을 정해줘야 한다.
 
-    model_config = {
-        "json_schema_extra": {
+    # model_config = {
+    #     "json_schema_extra": {
+    class Config:
+        schema_extra = {
             "example": {
                 "email": "fastapi@packt.com",
                 "username": "strong!!!",
                 "events": [],
             }
         }
-    }
 
 
 class UserSignIn(BaseModel):
