@@ -6,6 +6,9 @@ from database.connection import Settings
 
 import uvicorn
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 app = FastAPI()
 settings = Settings()
 
@@ -17,6 +20,18 @@ app.include_router(
 app.include_router(
     event_router,
     prefix="/event",
+)
+
+# 출처 등록
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
