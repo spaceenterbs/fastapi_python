@@ -46,6 +46,7 @@ async def retrieve_event(id: PydanticObjectId) -> Event:
 async def create_event(
     body: Event, user: str = Depends(authenticate)
 ) -> dict:  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
+    body.creator = user  # 새로운 이벤트가 생성될 때 creator 필드가 함께 저장되도록 한다.
     await event_database.save(body)
     # events.append(body)
     return {
@@ -57,12 +58,20 @@ async def create_event(
 async def delete_event(
     id: PydanticObjectId, user: str = Depends(authenticate)
 ) -> dict:  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
-    event = await event_database.delete(id)
+    event = await event_database.get(id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist",
         )
+    if event.creator != user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Operation not allowed",
+        )
+
+    event = await event_database.delete(id)
+
     return {
         "message": "Event deleted successfully",
     }
@@ -94,6 +103,12 @@ async def update_event(
     body: EventUpdate,
     user: str = Depends(authenticate),  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
 ) -> Event:
+    event = await event_database.get(id)
+    if event.creator != user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Operation not allowed",
+        )
     updated_event = await event_database.update(id, body)
     if not updated_event:
         raise HTTPException(

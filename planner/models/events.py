@@ -7,6 +7,7 @@ from typing import Optional, List
 # models 폴더의 모델 파일을 변경하여 몽고DB 문서를 사용할 수 있도록 한다.
 class Event(Document):
     # id: int
+    creator: Optional[str]  # 해당 이벤트를 소유한 사용자만 처리할 수 있도록 한다.
     title: str
     image: str
     description: str
