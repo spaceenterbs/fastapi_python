@@ -8,11 +8,15 @@ from models.events import Event
 from models.users import User
 
 
+# 루프 세션 픽스처를 정의한다. 이 픽스처는 테스트 세션이 끝날 때까지 유지된다.
 @pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.get_event_loop()
-    yield loop
+    yield loop  # 루프 객체를 테스트에 제공하고, 모든 테스트가 완료될 때까지 기다린 후에 루프를 닫도록 함
+    # 루프 객체를 반환한다. 'yield'문은 함수가 제너레이터(generator)라는 특별한 종류의 함수임을 나타낸다.
+    # 제너레이터 함수는 일반적인 반환 대신 'yield'문을 사용해 값을 보내고(즉, "생성"하고), 다음 호출 때까지 실행 상태를 유지한다.
     loop.close()
+    # 위 코드의 목적 = 세션 단위로 동일한 asyncio 이벤트 루프를 사용하다가, 모든 테스트가 완료되면 그 이벤트 루프를 닫는다.
 
 
 # Settings 클래스에서 새로운 db 인스턴스를 만든다.
@@ -21,7 +25,7 @@ async def init_db():
     test_settings = Settings()
     test_settings.DATABASE_URL = "mongodb://localhost:27017/testdb"
 
-    await test_settings.initializer_database()
+    await test_settings.initialize_database()
 
 
 # 기본 클라이언트 픽스처를 정의한다. 이 픽스처는 httpx를 통해 비동기로 실행되는 앱 인스턴스를 반환한다.
