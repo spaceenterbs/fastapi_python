@@ -34,7 +34,7 @@ def create_access_token(user: str):  # 토큰 생성함수는 문자열 하나�
 def verify_access_token(token: str):
     try:
         # 함수가 토큰을 문자열로 받아 try 블록 내에서 여러 가지 확인 작업을 거친다.
-        data = jwt.decode(token, settings.SECTRET_KEY, algorithms=["HS256"])
+        data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         expire = data.get("expires")
 
         if expire is None:  # 토큰의 만료 시간이 존재하는지 확인한다.

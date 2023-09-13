@@ -1,9 +1,10 @@
 # 이벤트 생성, 변경, 삭제 등의 처리를 위한 라우팅
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from database.connection import Database
 from models.events import Event, EventUpdate
 from typing import List
+from auth.authenticate import authenticate
 
 event_database = Database(Event)
 
@@ -42,7 +43,9 @@ async def retrieve_event(id: PydanticObjectId) -> Event:
 
 # 이벤트 생성 및 삭제 라우트를 정의한다. 마지막은 전체 이벤트 삭제다.
 @event_router.post("/new")
-async def create_event(body: Event) -> dict:
+async def create_event(
+    body: Event, user: str = Depends(authenticate)
+) -> dict:  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
     await event_database.save(body)
     # events.append(body)
     return {
@@ -51,7 +54,9 @@ async def create_event(body: Event) -> dict:
 
 
 @event_router.delete("/{id}")
-async def delete_event(id: PydanticObjectId) -> dict:
+async def delete_event(
+    id: PydanticObjectId, user: str = Depends(authenticate)
+) -> dict:  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
     event = await event_database.delete(id)
     if not event:
         raise HTTPException(
@@ -84,7 +89,11 @@ async def delete_all_events() -> dict:
 
 # 변경(update) 라우트는 실제 데이터베이스와 연동할 때 구현한다.
 @event_router.put("/{id}", response_model=Event)
-async def update_event(id: PydanticObjectId, body: EventUpdate) -> Event:
+async def update_event(
+    id: PydanticObjectId,
+    body: EventUpdate,
+    user: str = Depends(authenticate),  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
+) -> Event:
     updated_event = await event_database.update(id, body)
     if not updated_event:
         raise HTTPException(

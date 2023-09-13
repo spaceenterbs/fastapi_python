@@ -29,7 +29,7 @@ async def sign_new_user(user: User) -> dict:
     if user_exist:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User with email provieded exists already",
+            detail="User with email provided exists already",
         )
     # 패스워드를 해싱해서 db에 저장하도록 routes/users.py의 사용자 등록 라우트를 수정한다.
     """ 이렇게 하면 사용자 등록 라우트가 사용자를 등록할 때 패스워드를 해싱한 후 저장한다. """
