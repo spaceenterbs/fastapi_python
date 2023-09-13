@@ -26,7 +26,7 @@ async def sign_new_user(user: User) -> dict:
         )
     await user_database.save(user)
     return {
-        "message": "User successfully registerd!",
+        "message": "User created successfully.",
     }
 
     # if data.email in users:
