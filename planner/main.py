@@ -26,7 +26,7 @@ async def init_db():
     await settings.initialize_database()
 
 
-# uvicorn.run() 메서드를 사용해 8001번 포트에서 앱을 실행하도록 설정한다.
+# uvicorn.run() 메서드를 사용해 9000(8000이 안돼~)번 포트에서 앱을 실행하도록 설정한다.
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
