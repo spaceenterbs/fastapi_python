@@ -7,6 +7,7 @@ from models.events import Event
 
 
 class Settings(BaseSettings):
+    SECRET_KEY: Optional[str] = None
     DATABASE_URL: Optional[str] = None
 
     async def initialize_database(self):  # 데이터베이스를 초기화하는 메서드를 정의한다.
