@@ -6,7 +6,7 @@ from models.users import User
 from models.events import Event
 
 
-class Settings(BaseSettings):
+class Settings(BaseSettings):  # 데이터베이스를 초기화하는 메서드를 갖고 있다. 환경 변수를 읽어오는 클래스를 정의한다.
     SECRET_KEY: Optional[str] = None
     DATABASE_URL: Optional[str] = "default"
 
@@ -43,9 +43,9 @@ class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중
         docs = await self.model.find_all().to_list()
         return docs
 
-    async def update(
+    async def update(  #
         self, id: PydanticObjectId, body: BaseModel
-    ) -> Any:  # update() 메서드는 하나의 ID와 pydantic 스키마(모델)를 인수로 받는다.
+    ) -> Any:  # update() 메서드는 하나의 ID와 pydantic 스키마(모델)를 인수로 받는다. 주어진 문서 id와 업데이트할 내용인 body를 인자로 받아 해당 id를 가진 문서의 내용을 업데이트한다.
         """
         update() 메서드는 하나의 ID와 pydantic 스키마(모델)를 인수로 받아서,
         클라이언트가 보낸 PUT 요청에 의해 변경된 필드를 업데이트한다.
@@ -57,14 +57,14 @@ class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중
             k: v for k, v in des_body.items() if v is not None
         }  # 변경된 요청 바디는 딕셔너리에 저장된 다음 None값을 제외하도록 필터링된다.
         update_query = {
-            "$set": {
+            "$set": {  # $set은 명령이다. 몽고DB에서는 문서의 필드를 업데이트할 때 사용한다.
                 field: value for field, value in des_body.items()
             },  # 스키마에는 클라이언트가 보낸 PUT 요청에 의해 변경된 필드가 저장된다.
         }
 
         doc = await self.get(doc_id)
         if not doc:
-            return False
+            return False  # 해당 id의 문서가 존재하지 않으면 함수는 False 값을 반환하며 종료된다.
         await doc.update(update_query)
         return doc
 
