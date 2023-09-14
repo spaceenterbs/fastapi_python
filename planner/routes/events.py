@@ -6,13 +6,14 @@ from models.events import Event, EventUpdate
 from typing import List
 from auth.authenticate import authenticate
 
-event_database = Database(Event)
 
 event_router = APIRouter(
     tags=["Event"],
 )
 
-events = []  # 이벤트 데이터를 관리하기 위한 목적. 데이터를 리스트에 추가하거나 삭제하는 데 사용된다.
+event_database = Database(Event)
+
+# events = []  # 이벤트 데이터를 관리하기 위한 목적. 데이터를 리스트에 추가하거나 삭제하는 데 사용된다.
 
 
 # 모든 이벤트를 추출하거나 특정 ID의 이벤트만 추출하는 라우트를 정의한다.
@@ -59,18 +60,17 @@ async def delete_event(
     id: PydanticObjectId, user: str = Depends(authenticate)
 ) -> dict:  # 의존성 주입을 사용하여 사용자가 로그인했는지 확인한다.
     event = await event_database.get(id)
-    if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event with supplied ID does not exist",
-        )
     if event.creator != user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Operation not allowed",
         )
-
-    event = await event_database.delete(id)
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event with supplied ID does not exist",
+        )
+    await event_database.delete(id)
 
     return {
         "message": "Event deleted successfully",
@@ -86,6 +86,9 @@ async def delete_event(
     #     status_code=status.HTTP_404_NOT_FOUND,
     #     detail="Event with supplied ID does not exist",
     # )
+
+
+events = []
 
 
 @event_router.delete("/")
@@ -112,7 +115,7 @@ async def update_event(
     updated_event = await event_database.update(id, body)
     if not updated_event:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist",
         )
     return updated_event

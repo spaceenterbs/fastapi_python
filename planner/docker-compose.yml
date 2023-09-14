@@ -9,12 +9,12 @@ services:
     env_file:
       - .env.prod
 
-    database:
-      image: mongo:5.0.15
-      posts:
-        - "27017"
-      volumes:
-        - data:/data/db
+  database:
+    image: mongo
+    ports:
+      - "27017"
+    volumes:
+      - data:/data/db
 
 volumes:
   data:

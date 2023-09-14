@@ -8,7 +8,7 @@ from models.events import Event
 
 class Settings(BaseSettings):
     SECRET_KEY: Optional[str] = None
-    DATABASE_URL: Optional[str] = None
+    DATABASE_URL: Optional[str] = "default"
 
     async def initialize_database(self):  # 데이터베이스를 초기화하는 메서드를 정의한다.
         client = AsyncIOMotorClient(self.DATABASE_URL)
@@ -33,7 +33,7 @@ class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중
 
     async def get(
         self, id: PydanticObjectId
-    ) -> Any:  # ID를 인수로 받아 컬렉션에서 일치하는 레코드를 불러온다.
+    ) -> bool:  # ID를 인수로 받아 컬렉션에서 일치하는 레코드를 불러온다.
         doc = await self.model.get(id)
         if doc:
             return doc

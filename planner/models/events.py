@@ -21,7 +21,7 @@ class Event(Document):
             "example": {
                 "title": "FastAPI Book Launch",
                 "image": "https://linktomyimage.com/image.png",
-                "description": "Wewill be discussing the contents of the FastAPI book in this event. Ensure to come with your own copy to win gifts!",
+                "description": "We will be discussing the contents of the FastAPI book in this event. Ensure to come with your own copy to win gifts!",
                 "tags": ["python", "fastapi", "book", "launch"],
                 "location": "Google Meet",
             }

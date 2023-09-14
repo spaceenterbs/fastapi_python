@@ -8,9 +8,9 @@ from models.events import Event
 class User(Document):
     email: EmailStr
     password: str
-    events: Optional[
-        List[Event]
-    ]  # 선택적 필드인 Optional은 필요에 따라 값을 포함하거나 생략할 수 있다. None이 될 수 있다. # = None  # 기본값을 정해줘야 한다.
+    # events: Optional[
+    #     List[Event]
+    # ]  # 선택적 필드인 Optional은 필요에 따라 값을 포함하거나 생략할 수 있다. None이 될 수 있다. # = None  # 기본값을 정해줘야 한다.
 
     class Settings:
         name = "users"
@@ -22,7 +22,7 @@ class User(Document):
             "example": {
                 "email": "fastapi@packt.com",
                 "username": "strong!!!",
-                "events": [],
+                # "events": [],
             }
         }
 

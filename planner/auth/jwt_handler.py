@@ -4,12 +4,13 @@ from datetime import datetime
 from fastapi import HTTPException, status
 from jose import jwt, JWTError  # JWT를 인코딩, 디코딩하는 jose 라이브러리
 from database.connection import Settings
+from models.users import User
 
 # SECRET_KEY 변수를 추출할 수 있도록 Settings 클래스의 인스턴스를 만들고 토큰 생성용 함수를 정의한다.
 settings = Settings()
 
 
-def create_access_token(user: str):  # 토큰 생성함수는 문자열 하나를 받아서 payload 딕셔너리에 전달한다.
+def create_access_token(user: str) -> str:  # 토큰 생성함수는 문자열 하나를 받아서 payload 딕셔너리에 전달한다.
     # payload 딕셔너리는 사용자명과 만료 시간을 포함하여 JWT가 디코딩될 때 반환된다.
     payload = {
         "user": user,
@@ -31,7 +32,7 @@ def create_access_token(user: str):  # 토큰 생성함수는 문자열 하나�
 
 
 # 앱에 전달된 토큰을 검증하는 함수
-def verify_access_token(token: str):
+async def verify_access_token(token: str) -> dict:
     try:
         # 함수가 토큰을 문자열로 받아 try 블록 내에서 여러 가지 확인 작업을 거친다.
         data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
@@ -48,6 +49,12 @@ def verify_access_token(token: str):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Token expired!",
+            )
+        user_exist = await User.find_one(User.email == data["user"])
+        if not user_exist:  # 토큰에 저장된 사용자가 존재하는지 확인한다.
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token",
             )
         return data  # 토큰이 유효하면 디코딩된 페이로드를 반환한다.
     except JWTError:  # JWT 요청 자체에 오류가 있는지 확인한다.
