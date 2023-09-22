@@ -21,7 +21,7 @@ hash_password = HashPassword()
 
 
 @user_router.post("/signup")
-async def sign_new_user(user: User) -> dict:
+async def sign_new_user(user: User) -> dict:  # user 매개변수는 User 모델의 인스턴스다.
     """
     해당 이메일의 사용자가 존재하는지 확인하고 없으면 db에 등록한다.
     """
@@ -35,7 +35,7 @@ async def sign_new_user(user: User) -> dict:
     """ 이렇게 하면 사용자 등록 라우트가 사용자를 등록할 때 패스워드를 해싱한 후 저장한다. """
     hashed_password = hash_password.create_hash(user.password)
     user.password = hashed_password
-    await user_database.save(user)
+    await user_database.save(user)  # User 모델의 객체로서의 user.
     return {
         "message": "User created successfully.",
     }
