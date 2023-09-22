@@ -5,7 +5,10 @@ import time
 from datetime import datetime
 
 from fastapi import HTTPException, status
-from jose import jwt, JWTError  # JWT를 인코딩, 디코딩하는 jose 라이브러리
+from jose import (
+    jwt,
+    JWTError,
+)  # pip install python-jose[cryptography] python-multipart # JWT를 인코딩, 디코딩하는 jose 라이브러리
 from database.connection import Settings
 from models.users import User
 
@@ -60,8 +63,8 @@ async def verify_access_token(token: str) -> dict:
                 detail="Invalid token",
             )
         return data  # 토큰이 유효하면 디코딩된 페이로드를 반환한다.
-    except JWTError:  # JWT 요청 자체에 오류가 있는지 확인한다.
+    except JWTError as exec:  # JWT 요청 자체에 오류가 있는지 확인한다.
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid token",
-        )
+        ) from exec

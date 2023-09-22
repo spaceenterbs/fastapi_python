@@ -2,10 +2,10 @@
 authenticate 의존 라이브러리가 포함되며 인증 및 권한을 위해 라우트에 주입된다.
 """
 from fastapi import (
-    Depends,
+    Depends,  # Depends = oauth2_scheme을 의존 라이브러리 함수에 주입한다.
     HTTPException,
     status,
-)  # Depends = oauth2_scheme을 의존 라이브러리 함수에 주입한다.
+)
 from fastapi.security import (
     OAuth2PasswordBearer,
 )  # OAuth2PasswordBearer = 보안 로직이 존재한다는 것을 앱에 알려준다.
