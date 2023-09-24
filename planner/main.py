@@ -1,13 +1,16 @@
 # 라우트를 등록하고 앱을 실행한다. 라이브러리와 사용자 라우트 정의를 임포트한다.
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from routes.users import user_router
 from routes.events import event_router
 from database.connection import Settings
-
 import uvicorn
-
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+
+
+from typing import Annotated
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
 
 app = FastAPI()
 settings = Settings()
@@ -37,6 +40,43 @@ app.include_router(
     event_router,
     prefix="/event",
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  # 토큰 URL을 지정한다.
+
+
+class User(BaseModel):
+    """
+    Pydantic usermodel
+    """
+
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    """
+    Security-First Steps
+    """
+    return {"token": token}
 
 
 # 앱 실행 시 몽고DB를 초기화하도록 만든다.
