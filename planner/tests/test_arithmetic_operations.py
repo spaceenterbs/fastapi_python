@@ -18,7 +18,7 @@ def divide(a: int, b: int) -> int:
 
 # 테스트 함수
 def test_add() -> None:
-    assert add(1, 1) == 22
+    assert add(1, 1) == 2
 
 
 def test_subtract() -> None:
