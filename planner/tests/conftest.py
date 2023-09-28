@@ -1,3 +1,9 @@
+"""
+CRUD 처리용 타우트와 사용자 인증 테스트를 위한 테스트 환경 구축
+
+테스트 시작점이 될 파일
+"""
+
 import asyncio  # 활성 루프 세션을 만들어서 테스트가 단일 스레드로 실행되도록 한다.
 import httpx  # httpx 테스트는 HTTP CRUD 처리를 실행하기 위한 비동기 클라이언트 역할을 한다.
 import pytest  # 픽스처 정의를 위해 사용된다.
@@ -21,7 +27,9 @@ def event_loop():
 
 # Settings 클래스에서 새로운 db 인스턴스를 만든다.
 async def init_db():
-    """DATABASE_URL과 초기화 함수를 호출하고. testdb라는 새로운 db를 사용한다."""
+    """
+    DATABASE_URL과 초기화 함수를 호출하고. testdb라는 새로운 db를 사용한다.
+    """
     test_settings = Settings()
     test_settings.DATABASE_URL = "mongodb://localhost:27017/testdb"
 
