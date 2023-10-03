@@ -8,32 +8,32 @@ from models.events import Event
 
 class Settings(BaseSettings):  # 데이터베이스를 초기화하는 메서드를 갖고 있다. 환경 변수를 읽어오는 클래스를 정의한다.
     SECRET_KEY: Optional[str] = None
-    DATABASE_URL: Optional[str] = "default"
+    DATABASE_URL: Optional[str] = "default"  # None
 
     async def initialize_database(self):  # 데이터베이스를 초기화하는 메서드를 정의한다.
         client = AsyncIOMotorClient(self.DATABASE_URL)
-        await init_beanie(  # db 클라이언트를 설정한다. SQLModel에서 생성한 몽고 엔진 버전과 문서 모델을 인수로 설정한다.
+        await init_beanie(  # DB 클라이언트를 설정한다. SQLModel에서 생성한 몽고 엔진 버전과 문서 모델을 인수로 설정한다.
             database=client.get_default_database(),
             document_models=[Event, User],
         )
 
-    class Config:  # db URL을 .env 파일에서 읽어온다.
+    class Config:  # DB URL은 Config sub class에 정의된 환경 파일(env_file)에서 읽어온다.
         env_file = ".env"
 
 
-class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중에 사용되는 모델은 Event 또는 User 문서의 모델이다.
+class Database:  # 초기화 시 모델을 인수로 받는다. DB 초기화 중에 사용되는 모델은 Event 또는 User 문서의 모델이다.
     def __init__(self, model):
         self.model = model
 
     async def save(
         self, document
-    ) -> None:  # 문서를 인수로 받는 save() 메서드를 정의한다. 문서의 인스턴스를 받아서 db 인스턴스에 전달한다.
+    ) -> None:  # 문서를 인수로 받는 save() 메서드를 정의한다. 문서의 인스턴스를 받아서 DB 인스턴스에 전달한다.
         await document.create()
         return
 
     async def get(
         self, id: PydanticObjectId
-    ) -> bool:  # ID를 인수로 받아 컬렉션에서 일치하는 레코드를 불러온다.
+    ) -> Any:  # ID를 인수로 받아 컬렉션에서 일치하는 레코드를 불러온다.
         doc = await self.model.get(id)
         if doc:
             return doc
@@ -52,7 +52,7 @@ class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중
         None 값은 제외되며, 변경 쿼리는 beanie의 update() 메서드를 통해 실행된다.
         """
         doc_id = id
-        des_body = body.dict()
+        des_body = body.model_dump()
         des_body = {
             k: v for k, v in des_body.items() if v is not None
         }  # 변경된 요청 바디는 딕셔너리에 저장된 다음 None값을 제외하도록 필터링된다.
@@ -65,7 +65,7 @@ class Database:  # 초기화 시 모델을 인수로 받는다. db 초기화 중
         doc = await self.get(doc_id)
         if not doc:
             return False  # 해당 id의 문서가 존재하지 않으면 함수는 False 값을 반환하며 종료된다.
-        await doc.update(update_query)
+        await doc.update(update_query)  # beanie의 update() 메서드를 통해 실행된다.
         return doc
 
     # 작업이 완료되면 변경 쿼리에 저장되고 beanie의 update() 메서드를 통해 실행된다.

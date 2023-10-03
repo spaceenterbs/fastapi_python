@@ -6,6 +6,9 @@ import pytest
 # 다음과 같이 테스트 함수와 요청 페이로드를 정의해본다.
 @pytest.mark.asyncio
 async def test_sign_new_user(default_client: httpx.AsyncClient) -> None:
+    """
+    사용자 등록 라우트 테스트
+    """
     payload = {
         "email": "testuser@packt.com",
         "password": "testpassword",
